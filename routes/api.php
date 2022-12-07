@@ -3,6 +3,7 @@
 use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,3 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('save-record', [PostController::class, 'saveRecord']);
 Route::get('list-records', [PostController::class, 'listRecord']);
 Route::get('detail-record/{id}', [PostController::class, 'detailRecord']);
+
+Route::get('local/temp/{path}', function (string $path){
+    return Storage::disk('local')->download($path);
+})->name('local.temp');
