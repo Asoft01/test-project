@@ -27,12 +27,5 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        // Storage::disk('local')->buildTemporaryUrlsUsing(function ($path, $expiration, $options) {
-        //     return URL::temporarySignedRoute(
-        //         'local.temp',
-        //         $expiration,
-        //         array_merge($options, ['path' => $path])
-        //     );
-        // });
     }
 }

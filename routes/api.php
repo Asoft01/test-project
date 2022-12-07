@@ -24,6 +24,9 @@ Route::post('save-record', [PostController::class, 'saveRecord']);
 Route::get('list-records', [PostController::class, 'listRecord']);
 Route::get('detail-record/{id}', [PostController::class, 'detailRecord']);
 
-Route::get('local/temp/{path}', function (string $path){
-    return Storage::disk('local')->download($path);
+
+Route::get('local/temp/{path}', function (string $path) {
+    return Storage::disk('public')->download($path);
 })->name('local.temp');
+
+Route::get('/get-temporary/{path}', [PostController::class, 'temporary']);

@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Helpers\ErrorContainer;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
-    public function saveRecord(Request $request){
+    public function saveRecord(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:50',
             'description' => 'required|max:250',
@@ -24,25 +26,21 @@ class PostController extends Controller
             ], 422);
         }
 
-        if($request->hasFile('file')){
-            $file = $request->file('file');
-            $filename = $file->getClientOriginalName();
-            $file->storeAs('public/',$filename);
+        if ($request->hasFile('file')) {
+            $image = $request->file->store('public');
+            $post = new Post();
+            $post->name = $request->name;
+            $post->description = $request->description;
+            $post->file = $image;
+            $post->type = $request->type;
 
-            $image = $request->file->store('posts');
+            $post->save();
+        } else {
             $post = new Post();
-            $post->name = $request->name; 
+            $post->name = $request->name;
             $post->description = $request->description;
-            $post->file = $image; 
-            $post->type = $request->type; 
-            
-            $post->save(); 
-        }else {
-            $post = new Post();
-            $post->name = $request->name; 
-            $post->description = $request->description;
-            $post->file = ""; 
-            $post->type = $request->type; 
+            $post->file = "";
+            $post->type = $request->type;
         }
 
         return response()->json([
@@ -52,21 +50,31 @@ class PostController extends Controller
         ], 200);
     }
 
-    public function listRecord(Request $request){
+    public function listRecord(Request $request)
+    {
         $list = Post::paginate(10);
+        
         return response()->json([
-            'success' => true, 
-            'message' => 'List of Records', 
+            'success' => true,
+            'message' => 'List of Records',
             'data' => $list
-        ], 200); 
+        ], 200);
     }
 
-    public function detailRecord(Request $request, $id){
+    
+    public function temporary(Request $request, $path)
+    {
+        $disk = Storage::disk('public');
+        return $disk->temporaryUrl($path, now()->addMinutes(10));
+    }
+
+    public function detailRecord(Request $request, $id)
+    {
         $detailRecord = Post::where('id', $id)->first();
         return response()->json([
-            'success' => true, 
-            'message' => 'Record Detail', 
-            'data' => $detailRecord
-        ], 200); 
+            'success' => true,
+            'message' => 'Record Detail',
+            'data' => $detailRecord,
+        ], 200);
     }
 }

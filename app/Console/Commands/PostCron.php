@@ -31,6 +31,6 @@ class PostCron extends Command
     {
         // return Command::SUCCESS;
         DB::table('posts')->where('created_at', '<=', Carbon::now()->subDays(30))->delete();
-
+        $this->info('30 days old records is being deleted every one hour');
     }
 }
