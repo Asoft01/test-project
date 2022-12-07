@@ -71,10 +71,17 @@ class PostController extends Controller
     public function detailRecord(Request $request, $id)
     {
         $detailRecord = Post::where('id', $id)->first();
-        return response()->json([
-            'success' => true,
-            'message' => 'Record Detail',
-            'data' => $detailRecord,
-        ], 200);
+        if($detailRecord){   
+            return response()->json([
+                'success' => true,
+                'message' => 'Record Detail',
+                'data' => $detailRecord,
+            ], 200);
+        }else{
+            return response()->json([
+                'success' => false,
+                'message' => 'No record found',
+            ], 200);   
+        }
     }
 }
